@@ -22,7 +22,8 @@ import (
 var editorCSS string
 
 var markdownParser = parser.New(parser.WithExtensions(extension.TableParser, extension.NewLinkifyParser()))
-var markdownRenderer = html.New(html.WithExtensions(extension.TableHTMLRenderer))
+var codePreview = codeRenderer{}
+var markdownRenderer = html.New(html.WithExtensions(extension.TableHTMLRenderer, &codePreview))
 
 func markdownPreview(message peb.EditorMessage) (peb.EditorReply, error) {
 	if message.Editor != "markdown" || message.Binary {

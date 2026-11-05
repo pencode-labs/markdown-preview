@@ -4,6 +4,23 @@ A read-only Markdown preview rendered by Goldmark, registered as an Open With ac
 
 Supports Markdown images, links (including automatic URL links), and GFM tables with column alignment. Images can use paths relative to the Markdown file within the workspace or HTTP(S) URLs. Links open workspace documents or the system browser. Image loading runs on a background worker and is cached for the preview session; unavailable images do not hide the document.
 
+Inline code (including double-backtick spans), fenced code blocks, and indented code blocks support syntax highlighting. Add a language after the opening fence, such as `go`, `js`, or `python`, for language-specific highlighting. Unlabelled snippets use automatic detection and shared lexical highlighting. Code colors follow the editor theme.
+
+Use a `mermaid` fence for flowcharts. Rendering runs locally in the extension, including on remote workspace servers, without JavaScript or a browser. Labels use native text for Chinese font support and theme colors. Compact spacing and automatic wrapping of long node labels reduce the canvas width; wide diagrams still scroll horizontally. Ordinary nodes have rounded, tinted surfaces, decisions have dashed outlines, and branch labels have rounded borders. Native surfaces and labels follow the editor theme. Invalid or oversized diagrams show an error and their highlighted source while keeping the rest of the document visible. Rendered code and diagrams share a bounded cache.
+
+Vertical branching trees keep the longest continuation on a straight path and pack side branches alongside it. Connectors have rounded turns, with branch labels beside the vertical segment leading to their target. Joins, loops, subgraphs and horizontal diagrams use Mermaid's layout.
+
+````markdown
+```mermaid
+flowchart TD
+    A[开始] --> B{检查通过？}
+    B -->|是| C[完成]
+    B -->|否| A
+```
+````
+
+Supports Mermaid `graph` / `flowchart` syntax with directions, branches, loops, subgraphs and multiline labels. Flowchart source is limited to 32 KiB and the rendered canvas to 2048 × 2048 pixels.
+
 Uses the [Pencode](https://github.com/pencode-labs/pencode) peb v14 SDK. Requires Go 1.27.0 or newer.
 
 ## Build and install

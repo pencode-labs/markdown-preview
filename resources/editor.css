@@ -1,5 +1,22 @@
 .markdown-preview { min-height: 100%; max-width: 900px; margin: 0 auto; padding: 32px 28px; overflow-wrap: break-word; line-height: 1.7; }
-.markdown-preview pre { padding: 12px; background: var(--vscode-editorWidget-background); overflow: auto; scrollbar-width: thin; scrollbar-color: var(--vscode-scrollbarSlider-background) transparent; }
+.markdown-preview pre { white-space: pre; padding: 12px; background: var(--vscode-editorWidget-background); overflow: auto; scrollbar-width: thin; scrollbar-color: var(--vscode-scrollbarSlider-background) transparent; }
+.markdown-preview code { display: inline-block; box-sizing: border-box; max-width: 100%; white-space: pre-wrap; font-family: monospace; font-size: 0.95em; background: color-mix(in srgb, var(--vscode-editor-foreground) 12%, var(--vscode-editor-background)); padding: 1px 6px; border-radius: 4px; }
+.markdown-preview pre code { display: inline; max-width: none; white-space: inherit; font-size: 1em; background: transparent; padding: 0; border-radius: 0; }
+.markdown-preview .tok-keyword { color: var(--vscode-syntax-keyword); }
+.markdown-preview .tok-operator { color: var(--vscode-syntax-operator); }
+.markdown-preview .tok-string { color: var(--vscode-syntax-string); }
+.markdown-preview .tok-number { color: var(--vscode-syntax-number); }
+.markdown-preview .tok-comment { color: var(--vscode-syntax-comment); font-style: italic; }
+.markdown-preview .tok-type { color: var(--vscode-syntax-type); }
+.markdown-preview .tok-function { color: var(--vscode-syntax-function); }
+.markdown-preview .mermaid { margin: 16px 0; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--vscode-scrollbarSlider-background) transparent; }
+.markdown-preview .diagram { position: relative; margin: 0 auto; font-size: 14px; line-height: 1; color: color-mix(in srgb, var(--vscode-textLink-foreground) 65%, var(--vscode-editor-foreground)); }
+.markdown-preview .diagram img { display: block; max-width: none; }
+.markdown-preview .diagram-node { position: absolute; box-sizing: border-box; border: 1px solid color-mix(in srgb, var(--vscode-textLink-foreground) 24%, var(--vscode-editor-background)); border-radius: 16px; background: color-mix(in srgb, var(--vscode-button-background) 22%, var(--vscode-editor-background)); }
+.markdown-preview .diagram-decision { border: none; background: transparent; }
+.markdown-preview .diagram-label { position: absolute; white-space: pre; font-weight: 600; }
+.markdown-preview .diagram-edge-label { padding: 4px 8px; border: 1px solid var(--vscode-textLink-foreground); border-radius: 16px; background: var(--vscode-editor-background); font-weight: 400; }
+.markdown-preview .diagram-error { color: var(--vscode-descriptionForeground); }
 .markdown-preview img { max-width: 100%; height: auto; }
 .markdown-preview a { color: var(--vscode-textLink-foreground); border-bottom: 1px solid var(--vscode-textLink-foreground); font-weight: 600; cursor: pointer; }
 .markdown-preview a:hover { background: var(--vscode-list-hoverBackground); }
