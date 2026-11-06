@@ -12,8 +12,8 @@ github.com/hexops/gotextdiff v1.0.3 h1:gitA9+qJrrTCsiCl7+kh75nPqQt1cx4ZkudSTLoUq
 github.com/hexops/gotextdiff v1.0.3/go.mod h1:pSWU5MAI3yDq+fZBTazCSJysOMbxWL1BSow5/V2vxeg=
 github.com/jtolds/gls v4.20.0+incompatible h1:xdiiI2gbIgH/gLH7ADydsJ1uDOEzR8yvV7C0MuV77Wo=
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
-github.com/pencode-labs/pencode v0.0.0-20261029165847-e535e9d97dba h1:Rwp+DjQhVGVMoDMFg3cMmYlQuwgw4P9DD9z1OZ2S6NU=
-github.com/pencode-labs/pencode v0.0.0-20261029165847-e535e9d97dba/go.mod h1:V/MHMDnan4bRQHnrJfAOw8AO4zdV6XSsqXoubsEMhRk=
+github.com/pencode-labs/pencode v0.1.0-rc.1 h1:p2r/FN189MkcB9R92Nxm0qPzN1tlURng6HwImekJVv0=
+github.com/pencode-labs/pencode v0.1.0-rc.1/go.mod h1:7fMJQW6E2Ctqu/G/gN32TvCCFuFbNY1HkDabUOmUwfI=
 github.com/smarty/assertions v1.15.0 h1:cR//PqUBUiQRakZWqBiFFQ9wb8emQGDb0HeGdqGByCY=
 github.com/smarty/assertions v1.15.0/go.mod h1:yABtdzeQs6l1brC900WlRNwj6ZR55d7B+E8C6HtKdec=
 github.com/smartystreets/goconvey v1.8.1 h1:qGjIddxOk4grTu9JPOU31tVfq3cNdBlNa5sSznIX1xY=
