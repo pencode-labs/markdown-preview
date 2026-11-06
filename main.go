@@ -50,7 +50,7 @@ func markdownPreview(message peb.EditorMessage) (peb.EditorReply, error) {
 	}
 	// Goldmark's default renderer omits raw HTML from the Markdown preview.
 	return peb.EditorReply{View: &peb.EditorView{
-		HTML: `<article class="markdown-preview" aria-label="Markdown 预览">` + preview.String() + `</article>`,
+		HTML: `<article class="markdown-preview" data-ref="preview" data-pencode-searchable aria-label="Markdown 预览">` + preview.String() + `</article>`,
 		CSS:  editorCSS,
 	}}, nil
 }
