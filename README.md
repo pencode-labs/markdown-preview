@@ -23,7 +23,7 @@ flowchart TD
 
 Supports Mermaid `graph` / `flowchart` syntax with directions, branches, loops, subgraphs and multiline labels. Flowchart source is limited to 32 KiB and the rendered canvas to 2048 × 2048 pixels.
 
-Uses the [Pencode](https://github.com/pencode-labs/pencode) peb v14 SDK. Requires Go 1.27.0 or newer.
+Uses the [Pencode](https://github.com/pencode-labs/pencode) peb v20 SDK. Requires Go 1.27.0 or newer.
 
 ## Build and install
 
@@ -49,12 +49,21 @@ MIT. See [LICENSE](LICENSE).
 
 ## Releases
 
-Push a `v*` tag (for example, `v0.1.0`) to this repository, or publish a GitHub Release,
-to test and build Linux, macOS and Windows packages for amd64 and arm64. The workflow
-uploads ZIP archives and `SHA256SUMS` to the matching release, creating it if needed.
-Prerelease tags such as `v0.1.0-rc.1` create prereleases.
+Push a version tag such as `v0.1.0` to test, cross-compile and publish a GitHub
+Release automatically. Linux, macOS (`darwin`) and Windows each support `amd64`
+and `arm64`. Prerelease tags such as `v0.2.0-rc.1` create prereleases.
 
-Each ZIP contains `bin/`, `resources/`, the README and license. Its manifest uses the
-tag version and the correct executable suffix for Windows. Download the package
-for the workspace server's OS and architecture, extract it, then install the
-extracted directory through Pencode's extension manager.
+Assets use `<extension-id>-<tag>-<os>-<arch>.zip`, accompanied by `SHA256SUMS`.
+Each ZIP has one top-level `<extension-id>/` directory containing `bin/`,
+`resources/extension.json`, the README, license and all resource notices. The
+packaged manifest uses the tag version and Windows entries include `.exe`.
+
+Download the archive matching the **workspace server's** OS and architecture.
+Extract it directly into `~/.pencode/extensions/` (Windows:
+`%USERPROFILE%/.pencode/extensions/`), preserving executable permissions. For
+example, `unzip markdown-preview-v0.1.0-linux-amd64.zip -d ~/.pencode/extensions/` installs
+`~/.pencode/extensions/markdown-preview/resources/extension.json`. Restart Pencode to discover the extension.
+For remote workspaces, extract on the remote server. You can also select the
+extracted `<extension-id>/` directory in the extension manager's local-directory
+installation flow. No Go toolchain is needed to use a release package; extension
+specific tools described above still need to be available on the workspace server.
