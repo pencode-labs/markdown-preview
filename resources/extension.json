@@ -1,7 +1,7 @@
 {
   "id": "markdown-preview",
   "name": "Markdown 预览",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "Pencode",
   "description": "实时预览 Markdown 文档，可独立打开或与源码分栏显示，编辑后自动更新。支持表格、代码块、图片与链接，方便编写和检查项目文档。",
   "entry": "bin/markdown-preview"
