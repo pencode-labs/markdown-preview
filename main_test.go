@@ -16,8 +16,8 @@ func TestMarkdownPreviewIsReadOnlyAndUpdatesWithDocument(t *testing.T) {
 	if !strings.Contains(reply.View.HTML, "<h1>Hello</h1>") || strings.Contains(reply.View.HTML, "<script>") {
 		t.Fatal("preview or escaping failed")
 	}
-	if !strings.Contains(reply.View.HTML, `data-ref="preview" data-pencode-searchable`) {
-		t.Fatal("preview did not enable rendered text search")
+	if !strings.Contains(reply.View.HTML, `data-ref="preview" data-pencode-selectable data-pencode-searchable`) {
+		t.Fatal("preview did not enable rendered text selection and search")
 	}
 	message.Event = peb.EditorEvent{Kind: "input", Ref: "source", Value: ""}
 	reply, err = markdownPreview(message)

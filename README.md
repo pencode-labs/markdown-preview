@@ -4,6 +4,8 @@ A read-only Markdown preview rendered by Goldmark, registered as an Open With ac
 
 Supports Markdown images, links (including automatic URL links), and GFM tables with column alignment. Images can use paths relative to the Markdown file within the workspace or HTTP(S) URLs. Links open workspace documents or the system browser. Image loading runs on a background worker and is cached for the preview session; unavailable images do not hide the document.
 
+Preview text can be selected and copied with the workbench clipboard actions.
+
 Use Ctrl+F (Cmd+F on macOS) to search the rendered preview text. Matches are highlighted on the page; Enter / Shift+Enter and F3 / Shift+F3 navigate between them and scroll the current match into view. Case-sensitive, whole-word and regular-expression search use the workbench find bar. Search updates when the document changes.
 
 Inline code (including double-backtick spans), fenced code blocks, and indented code blocks support syntax highlighting. Add a language after the opening fence, such as `go`, `js`, or `python`, for language-specific highlighting. Unlabelled snippets use automatic detection and shared lexical highlighting. Code colors follow the editor theme.
