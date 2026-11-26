@@ -1,4 +1,4 @@
-.markdown-preview { min-height: 100%; max-width: 900px; margin: 0 auto; padding: 32px 28px; overflow-wrap: break-word; line-height: 1.7; }
+.markdown-preview { box-sizing: border-box; min-height: 100%; margin: 0; padding: 32px 28px; overflow-wrap: break-word; line-height: 1.7; }
 .markdown-preview h1, .markdown-preview h2, .markdown-preview h3, .markdown-preview h4, .markdown-preview h5, .markdown-preview h6 { margin: 24px 0 10px; font-weight: 700; line-height: 1.4; }
 .markdown-preview h1 { font-size: 2em; }
 .markdown-preview h2 { font-size: 1.75em; }
@@ -26,7 +26,7 @@
 .markdown-preview .diagram-error { color: var(--vscode-descriptionForeground); }
 .markdown-preview img { max-width: 100%; height: auto; }
 .markdown-preview a { color: var(--vscode-textLink-foreground); border-bottom: 1px solid var(--vscode-textLink-foreground); font-weight: 600; cursor: pointer; }
-.markdown-preview a:hover { background: var(--vscode-list-hoverBackground); }
+.markdown-preview a:hover { color: color-mix(in srgb, var(--vscode-textLink-foreground) 65%, var(--vscode-editor-foreground)); }
 .markdown-preview table { border-spacing: 0; margin: 16px 0; border-top: 1px solid var(--vscode-editorWidget-border); border-left: 1px solid var(--vscode-editorWidget-border); }
 .markdown-preview th, .markdown-preview td { padding: 6px 12px; border-right: 1px solid var(--vscode-editorWidget-border); border-bottom: 1px solid var(--vscode-editorWidget-border); }
 .markdown-preview th { font-weight: bold; background: var(--vscode-editorWidget-background); }

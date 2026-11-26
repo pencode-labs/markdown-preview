@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/onix-engine/onix/html/markup"
 	"github.com/pencode-labs/pencode/peb"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/extension"
@@ -34,25 +35,27 @@ func markdownPreview(message peb.EditorMessage) (peb.EditorReply, error) {
 	}
 	var preview bytes.Buffer
 	document := markdownParser.ParseStringSource(message.Content)
-	if message.Path != "" {
-		base := url.URL{Path: "/" + strings.TrimPrefix(strings.ReplaceAll(message.Path, "\\", "/"), "/")}
-		_ = ast.Walk(document, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
-			if image, ok := node.(*ast.Image); ok && entering {
+	base := url.URL{Path: "/" + strings.TrimPrefix(strings.ReplaceAll(message.Path, "\\", "/"), "/")}
+	_ = ast.Walk(document, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
+		if image, ok := node.(*ast.Image); ok && entering {
+			image.SetAttribute("loading", text.NewMultiLineValue("lazy", nil))
+			if message.Path != "" {
 				if source, err := url.Parse(image.Destination.Value(util.StringToReadOnlyBytes(message.Content))); err == nil && source.Scheme == "" && source.Host == "" {
 					image.Destination = text.NewSingleLineValue(base.ResolveReference(source).String(), nil)
 				}
 			}
-			return ast.WalkContinue, nil
-		})
-	}
+		}
+		return ast.WalkContinue, nil
+	})
 	if err := markdownRenderer.RenderStringSource(&preview, message.Content, document); err != nil {
 		return peb.EditorReply{}, err
 	}
 	// Goldmark's default renderer omits raw HTML from the Markdown preview.
-	return peb.EditorReply{View: &peb.EditorView{
-		HTML: `<article class="markdown-preview" data-ref="preview" data-pencode-selectable data-pencode-searchable aria-label="Markdown 预览">` + preview.String() + `</article>`,
-		CSS:  editorCSS,
-	}}, nil
+	var b markup.Builder
+	b.Open("article", "class", "markdown-preview", "data-ref", "preview", "data-pencode-selectable", "", "data-pencode-searchable", "", "aria-label", "Markdown 预览")
+	b.Embed(preview.String())
+	b.End()
+	return peb.EditorReply{View: &peb.EditorView{HTML: b.String(), CSS: editorCSS}}, nil
 }
 
 func main() {

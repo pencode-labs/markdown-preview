@@ -8,13 +8,14 @@ import (
 
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/onix-engine/onix/html/markup"
 	"github.com/pencode-labs/pencode/peb"
 	"golang.org/x/net/html"
 )
 
 func TestCodeHighlightMergesAdjacentStyles(t *testing.T) {
 	const code = `value = "hello\nworld" + "<>&"`
-	var output strings.Builder
+	var output markup.Builder
 	writeCode(&output, codeKey{source: code, language: "python"})
 	markup := output.String()
 	root, err := html.Parse(strings.NewReader(markup))

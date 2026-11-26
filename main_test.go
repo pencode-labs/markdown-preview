@@ -16,7 +16,7 @@ func TestMarkdownPreviewIsReadOnlyAndUpdatesWithDocument(t *testing.T) {
 	if !strings.Contains(reply.View.HTML, "<h1>Hello</h1>") || strings.Contains(reply.View.HTML, "<script>") {
 		t.Fatal("preview or escaping failed")
 	}
-	if !strings.Contains(reply.View.HTML, `data-ref="preview" data-pencode-selectable data-pencode-searchable`) {
+	if !strings.Contains(reply.View.HTML, `data-pencode-searchable="" data-pencode-selectable="" data-ref="preview"`) {
 		t.Fatal("preview did not enable rendered text selection and search")
 	}
 	message.Event = peb.EditorEvent{Kind: "input", Ref: "source", Value: ""}
@@ -51,8 +51,8 @@ https://example.com
 			t.Fatalf("%s: %+v %v", kind, reply, err)
 		}
 		for _, want := range []string{
-			`<img src="images/diagram.png" alt="Local" title="Diagram">`,
-			`<img src="https://example.com/diagram.svg" alt="Remote">`,
+			`<img src="images/diagram.png" alt="Local" title="Diagram" loading="lazy">`,
+			`<img src="https://example.com/diagram.svg" alt="Remote" loading="lazy">`,
 			`<a href="docs/guide.md">Guide</a>`,
 			`<a href="https://example.com" title="Site">Site</a>`,
 			`<a href="https://example.com">https://example.com</a>`,

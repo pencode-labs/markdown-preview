@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"html"
 	"io"
 	"math"
 	"regexp"
@@ -13,6 +12,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/onix-engine/onix/html/markup"
 	mermaid "github.com/zkrebbekx/go-mermaid"
 	"github.com/zkrebbekx/go-mermaid/raster"
 )
@@ -119,7 +119,8 @@ func renderFlowchart(source string) (string, error) {
 		return "", err
 	}
 	svg = compactFlowchartLayout(svg)
-	var shapes, nodes, labels strings.Builder
+	var shapes strings.Builder
+	var nodes, labels markup.Builder
 	decoder := xml.NewDecoder(bytes.NewReader(svg))
 	width, height, offsetX, offsetY := 0.0, 0.0, 0.0, 0.0
 	var offsets []flowPoint
@@ -189,11 +190,11 @@ func renderFlowchart(source string) (string, error) {
 					// The native HTML renderer supports solid borders only.
 					fmt.Fprintf(&shapes, `<rect x="%.2f" y="%.2f" width="%.2f" height="%.2f" rx="16" fill="none" stroke="#808080" stroke-width="1" stroke-dasharray="2,2"/>`, box[0], box[1], box[2], box[3])
 				}
-				nodes.WriteString(`<div aria-hidden="true" class="diagram-node`)
+				class := "diagram-node"
 				if decision {
-					nodes.WriteString(" diagram-decision")
+					class += " diagram-decision"
 				}
-				fmt.Fprintf(&nodes, `" style="left:%.2fpx;top:%.2fpx;width:%.2fpx;height:%.2fpx"></div>`, box[0]+offsetX, box[1]+offsetY, box[2], box[3])
+				nodes.Element("div", "aria-hidden", "true", "class", class, "style", fmt.Sprintf("left:%.2fpx;top:%.2fpx;width:%.2fpx;height:%.2fpx", box[0]+offsetX, box[1]+offsetY, box[2], box[3]))
 			}
 		}
 	}
@@ -206,13 +207,15 @@ func renderFlowchart(source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var out strings.Builder
-	fmt.Fprintf(&out, `<div class="mermaid"><div class="diagram" role="img" aria-label="流程图" style="width:%.2fpx;height:%.2fpx"><img alt="" aria-hidden="true" width="%d" height="%d" src="data:image/png;base64,`, width, height, int(width), int(height))
-	out.WriteString(base64.StdEncoding.EncodeToString(image))
-	out.WriteString(`">`)
-	out.WriteString(nodes.String())
-	out.WriteString(labels.String())
-	out.WriteString("</div></div>\n")
+	var out markup.Builder
+	out.Open("div", "class", "mermaid")
+	diagram := out.Open("div", "class", "diagram", "role", "img", "aria-label", "流程图", "style", fmt.Sprintf("width:%.2fpx;height:%.2fpx", width, height))
+	out.Element("img", "loading", "lazy", "alt", "", "aria-hidden", "true", "width", strconv.Itoa(int(width)), "height", strconv.Itoa(int(height)), "src", "data:image/png;base64,"+base64.StdEncoding.EncodeToString(image))
+	diagram.AdoptChildren(nodes.Document())
+	diagram.AdoptChildren(labels.Document())
+	out.End()
+	out.End()
+	out.Text("\n")
 	return out.String(), nil
 }
 
@@ -249,23 +252,21 @@ func diagramNodeBox(element xml.StartElement) (box [4]float64, decision, ok bool
 	return box, false, false
 }
 
-func writeDiagramText(out *strings.Builder, text string, x, y float64, anchor, weight string, edge bool) {
-	out.WriteString(`<span class="diagram-label`)
+func writeDiagramText(out *markup.Builder, text string, x, y float64, anchor, weight string, edge bool) {
+	class, transform := "diagram-label", ""
 	if edge {
-		out.WriteString(" diagram-edge-label")
-	}
-	if edge {
-		fmt.Fprintf(out, `" style="left:%.2fpx;top:%.2fpx;transform:translate(-50%%,-50%%);`, x, y+2)
+		class += " diagram-edge-label"
+		y += 2
+		transform = "transform:translate(-50%,-50%);"
 	} else {
-		fmt.Fprintf(out, `" style="left:%.2fpx;top:%.2fpx;`, x, y-12)
+		y -= 12
+		if anchor == "middle" {
+			transform = "transform:translateX(-50%);"
+		}
 	}
-	if anchor == "middle" && !edge {
-		out.WriteString("transform:translateX(-50%);")
-	}
+	style := fmt.Sprintf("left:%.2fpx;top:%.2fpx;%s", x, y, transform)
 	if weight == "bold" {
-		out.WriteString("font-weight:bold;")
+		style += "font-weight:bold;"
 	}
-	out.WriteString(`">`)
-	out.WriteString(html.EscapeString(text))
-	out.WriteString("</span>")
+	out.TextElement("span", text, "class", class, "style", style)
 }

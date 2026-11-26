@@ -19,14 +19,24 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pencode/extensions/markdown-preview
     steps:
       - uses: actions/checkout@v4
         with:
+          path: pencode/extensions/markdown-preview
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: onix-engine/onix
+          ref: ${{ vars.ONIX_REF || 'main' }}
+          path: onix
           persist-credentials: false
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
-          cache-dependency-path: go.sum
+          go-version-file: pencode/extensions/markdown-preview/go.mod
+          cache-dependency-path: pencode/extensions/markdown-preview/go.sum
       - name: Validate release tag
         shell: bash
         run: |

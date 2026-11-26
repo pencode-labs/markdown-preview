@@ -1,12 +1,12 @@
 package main
 
 import (
-	"html"
 	"io"
 	"strings"
 
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/onix-engine/onix/html/markup"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/renderer"
 	renderhtml "github.com/yuin/goldmark/v2/renderer/html"
@@ -66,18 +66,18 @@ func (r *codeRenderer) fragment(key codeKey) string {
 	if cached, ok := r.cache[key]; ok {
 		return cached
 	}
-	var out strings.Builder
+	out := markup.Acquire()
+	defer out.Release()
 	if !key.inline && key.language == "mermaid" {
 		if diagram, err := renderFlowchart(key.source); err == nil {
-			out.WriteString(diagram)
+			out.Embed(diagram)
 		} else {
-			out.WriteString(`<p class="diagram-error" role="status">流程图渲染失败：`)
-			out.WriteString(html.EscapeString(err.Error()))
-			out.WriteString("</p>\n")
-			writeCode(&out, key)
+			out.TextElement("p", "流程图渲染失败："+err.Error(), "class", "diagram-error", "role", "status")
+			out.Text("\n")
+			writeCode(out, key)
 		}
 	} else {
-		writeCode(&out, key)
+		writeCode(out, key)
 	}
 	markup := out.String()
 	// Bound retained source and markup; editing prose reuses unchanged blocks.
@@ -98,16 +98,15 @@ func (r *codeRenderer) fragment(key codeKey) string {
 	return markup
 }
 
-func writeCode(out *strings.Builder, key codeKey) {
+func writeCode(out *markup.Builder, key codeKey) {
 	if !key.inline {
-		out.WriteString("<pre>")
+		out.Open("pre")
 	}
-	out.WriteString(`<code class="highlight`)
+	class := "highlight"
 	if key.language != "" {
-		out.WriteString(" language-")
-		out.WriteString(html.EscapeString(key.language))
+		class += " language-" + key.language
 	}
-	out.WriteString(`">`)
+	out.Open("code", "class", class)
 	lexer := lexers.Get(key.language)
 	if key.language == "" {
 		lexer = lexers.Analyse(key.source)
@@ -117,7 +116,7 @@ func writeCode(out *strings.Builder, key codeKey) {
 	}
 	iterator, err := lexer.Tokenise(&chroma.TokeniseOptions{State: "root", Nested: true}, key.source)
 	if err != nil {
-		out.WriteString(html.EscapeString(key.source))
+		out.Text(key.source)
 	} else {
 		active := ""
 		for token := iterator(); token != chroma.EOF; token = iterator() {
@@ -127,24 +126,23 @@ func writeCode(out *strings.Builder, key codeKey) {
 			class := tokenClass(token.Type)
 			if class != active {
 				if active != "" {
-					out.WriteString("</span>")
+					out.End()
 				}
 				if class != "" {
-					out.WriteString(`<span class="`)
-					out.WriteString(class)
-					out.WriteString(`">`)
+					out.Open("span", "class", class)
 				}
 				active = class
 			}
-			out.WriteString(html.EscapeString(token.Value))
+			out.Text(token.Value)
 		}
 		if active != "" {
-			out.WriteString("</span>")
+			out.End()
 		}
 	}
-	out.WriteString("</code>")
+	out.End()
 	if !key.inline {
-		out.WriteString("</pre>\n")
+		out.End()
+		out.Text("\n")
 	}
 }
 
