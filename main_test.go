@@ -88,3 +88,40 @@ func TestMarkdownPreviewResolvesDocumentImages(t *testing.T) {
 		}
 	}
 }
+
+func TestMarkdownPreviewRendersHTMLImages(t *testing.T) {
+	const source = `| Windows | macOS | Linux | Android | iOS | Web | WeChat Mini Games |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| <img src="editor/resources/images/icons/windows.svg" width="32" alt=""> | <img src="editor/resources/images/icons/macOS.svg" width="32" alt=""> | <img src="editor/resources/images/icons/linux.svg" width="32" alt=""> | <img src="editor/resources/images/icons/android.svg" width="32" alt=""> | <img src="editor/resources/images/icons/ios.svg" width="32" alt=""> | <img src="editor/resources/images/icons/web.svg" width="32" alt=""> | <img src="editor/resources/images/icons/wechat.svg" width="32" alt=""> |
+
+<IMG src="https://example.com/badge.svg?style=flat&amp;color=green" alt="&quot;Build&quot;" height="24" />
+<img src="local%20badge.svg" alt="Local" onerror="alert(1)">
+
+Inline <img src="javascript&#58;alert(1)"> <img src="file:///tmp/a.svg"> <img src="peb:badge">
+
+<script>alert(1)</script>
+`
+	reply, err := markdownPreview(peb.EditorMessage{
+		Editor: "markdown", Path: "/workspace/README.md", Content: source, Event: peb.EditorEvent{Kind: "open"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"windows", "macOS", "linux", "android", "ios", "web", "wechat"} {
+		want := `<td style="text-align:center"><img src="/workspace/editor/resources/images/icons/` + name + `.svg" alt="" width="32" loading="lazy"></td>`
+		if !strings.Contains(reply.View.HTML, want) {
+			t.Errorf("missing %s table icon in %s", name, reply.View.HTML)
+		}
+	}
+	for _, want := range []string{
+		`<img src="https://example.com/badge.svg?style=flat&amp;color=green" alt="&#34;Build&#34;" height="24" loading="lazy">`,
+		`<img src="/workspace/local%20badge.svg" alt="Local" loading="lazy">`,
+	} {
+		if !strings.Contains(reply.View.HTML, want) {
+			t.Errorf("missing %s in %s", want, reply.View.HTML)
+		}
+	}
+	if strings.Count(reply.View.HTML, "<img ") != 9 || strings.Contains(reply.View.HTML, "onerror") || strings.Contains(reply.View.HTML, "<script>") {
+		t.Fatal(reply.View.HTML)
+	}
+}
